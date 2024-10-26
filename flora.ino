@@ -71,14 +71,37 @@ CRGB leds[NUM_LEDS];
 
 #pragma endregion LED
 
+float brightness = 255;
+int index = 0;
+float idx_max = 255.0;
+bool up = true;
 void setup() {
   FastLED.addLeds<NEOPIXEL, FLORA_LED_PIN>(leds, NUM_LEDS);
+  leds[0] = CRGB::Red;
+  FastLED.show();
+
+  Serial.begin(115200);
+  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  leds[0] = CRGB::Red;
+  leds[0] = CRGB::Red * (lerp8by8(255, 15, (index / idx_max) * 256) / 255.0);
+  if (up){
+    index += 1;
+  }else{
+    index -= 1;
+  }
 
+  if(index == 0){
+    up = true;
+  }
+  if(index == idx_max - 1){
+    up = false;
+  }
+  Serial.println(index);
+  Serial.println((lerp8by8(255, 15, (index / idx_max) * 256) / 255.0));
+  delay(10);
   FastLED.show();
 
 }
